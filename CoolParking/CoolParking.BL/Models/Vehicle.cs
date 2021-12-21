@@ -55,7 +55,7 @@ namespace CoolParking.BL.Models
             return id;
         }
 
-        private static bool idValidation(string Id)
+        public static bool idValidation(string Id)
         {
             Regex regex = new Regex(@"^[A-Z]{2}-\d{4}-[A-Z]{2}$");
             if (regex.IsMatch(Id))
