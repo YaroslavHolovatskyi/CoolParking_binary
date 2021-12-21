@@ -23,7 +23,7 @@ namespace CoolParking.BL.Models
         {
             vehicles = new List<Vehicle>() { Capacity = 10 };
         }
-        public static Parking getInstance()
+        public static Parking GetInstance()
         {
             if (parking != null)
             {

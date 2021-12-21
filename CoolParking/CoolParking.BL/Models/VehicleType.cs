@@ -4,7 +4,7 @@ namespace CoolParking.BL.Models
 {
 public enum VehicleType
     {
-        PassangerCar = 1,
+        PassengerCar = 1,
         Truck,
         Bus,
         Motorcycle

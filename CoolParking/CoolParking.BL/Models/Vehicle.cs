@@ -19,15 +19,23 @@ namespace CoolParking.BL.Models
         public Vehicle(string id, VehicleType vehicleType, decimal balance)
         {
             if (idValidation(id))
+            {
                 Id = id;
-            else 
+            }
+            else
+            {
                 throw new ArgumentException();
+            }
 
             VehicleType = vehicleType;
             if (balance > 0 && balance <= Decimal.MaxValue)
+            {
                 Balance = balance;
+            }
             else
+            {
                 throw new ArgumentException();
+            }
         }
 
         public static string GenerateRandomRegistrationPlateNumber()
@@ -49,11 +57,15 @@ namespace CoolParking.BL.Models
 
         private static bool idValidation(string Id)
         {
-            Regex regex = new Regex(@"^[A-Z]{2}-\d{4}-^[A-Z]{2}$");
+            Regex regex = new Regex(@"^[A-Z]{2}-\d{4}-[A-Z]{2}$");
             if (regex.IsMatch(Id))
+            {
                 return true;
+            }
             else
+            {
                 return false;
+            }
         }
 
     }

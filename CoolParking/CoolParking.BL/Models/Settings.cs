@@ -2,7 +2,7 @@
 //       Implementation details are up to you, they just have to meet the requirements of the home task.
 namespace CoolParking.BL.Models
 {
-    static public class Setting
+    static public class Settings
     {
         public static decimal ParkingStartBalance { get; } = 0;
         public static int ParkingCapacity { get; } = 10;
@@ -13,7 +13,7 @@ namespace CoolParking.BL.Models
         {
             switch (vehicle)
             {
-                case VehicleType.PassangerCar:
+                case VehicleType.PassengerCar:
                     return 2;
                 case VehicleType.Truck:
                     return 5;
