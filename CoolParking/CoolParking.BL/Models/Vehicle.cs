@@ -5,6 +5,7 @@
 //       The Balance should be able to change only in the CoolParking.BL project.
 //       The type of constructor is shown in the tests and the constructor should have a validation, which also is clear from the tests.
 //       Static method GenerateRandomRegistrationPlateNumber should return a randomly generated unique identifier.
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -13,8 +14,11 @@ namespace CoolParking.BL.Models
 {
     public class Vehicle
     {
+        [JsonProperty("id")]
         public string Id { get; }
+        [JsonProperty("vehicleType")]
         public VehicleType VehicleType { get; }
+        [JsonProperty("balance")]
         public decimal Balance { get; internal set; }
         public Vehicle(string id, VehicleType vehicleType, decimal balance)
         {

@@ -79,7 +79,7 @@ namespace CoolParking.BL.Services
             var vehicle = parking.Vehicles.Find(v => v.Id == vehicleId);
             if(vehicle!=null && sum>0 && sum <= decimal.MaxValue)
             {
-                parking.Vehicles.Find(v => v.Id == vehicleId).Balance += sum;
+                vehicle.Balance += sum;
             }
             else
             {
@@ -94,7 +94,7 @@ namespace CoolParking.BL.Services
         {
             foreach(var i in parking.Vehicles)
             {
-                decimal tarrif = Settings.VehicleTariff(i.VehicleType);
+                decimal tarrif = Settings.vehicleParkingTariff[i.VehicleType];
                 decimal sum;
                 if (i.Balance > 0 && i.Balance - tarrif > 0)
                 {
@@ -121,6 +121,14 @@ namespace CoolParking.BL.Services
         public string ReadFromLog()
         {
             return _logService.Read();
+        }
+        public Vehicle GetVehicleById(string vehicleId)
+        {
+            if (!Vehicle.idValidation(vehicleId))
+            {
+                throw new ArgumentException();
+            }
+            return parking.Vehicles.Find(v => v.Id == vehicleId);
         }
         public void Dispose()
         {

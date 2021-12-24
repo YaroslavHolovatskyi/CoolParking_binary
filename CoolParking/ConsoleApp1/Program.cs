@@ -1,6 +1,8 @@
-﻿using CoolParking.BL.Interfaces;
+﻿using ConsoleApplication.Services;
+using CoolParking.BL.Interfaces;
 using CoolParking.BL.Models;
 using CoolParking.BL.Services;
+using CoolParking.WebAPI.Models;
 using System;
 using System.Net.Http;
 using System.Text.RegularExpressions;
@@ -11,15 +13,11 @@ namespace ConsoleApp1
     class Program
     {
 
-		static void Main(string[] args)
+		static async Task Main(string[] args)
 		{
-			//var parkingHttpService = new ParkingHttpService();
-			ITimerService _timerService = new TimerService();
-			ITimerService _timerService1 = new TimerService(); ;
-			ILogService _logService= new LogService("d:/1/Transactions.log");
-
-			var parking = new ParkingService(_timerService, _timerService1, _logService);
-			
+			var parkingHttpService = new ParkingHttpService();
+			var vehiclesHttpService = new VehiclesHttpService();
+			var transactionsHttpService = new TransactionsHttpService();
 
 			do
 			{
@@ -32,6 +30,7 @@ namespace ConsoleApp1
 					"- Get vehicle from the parking - 6\n\t " +
 					"- Transactions for a period - 7\n\t " +
 					"- Top up vehicle - 8\n\t " +
+					"- All transactions - 9\n\t " +
 					" Or write exit to out");
 				var input = Console.ReadLine();
 				Regex reg = new Regex(@"^[1-9]{1}$");
@@ -49,21 +48,21 @@ namespace ConsoleApp1
 					switch (Int32.Parse(input))
 					{
 						case 1:
-							var balance = parking.GetBalance();
+							var balance = await parkingHttpService.GetBalance();
 							Console.WriteLine($"Balance is {balance}");
 							break;
 
 						case 2:
-							var capacity = parking.GetCapacity();
+							var capacity = await parkingHttpService.GetCapacity();
 							Console.WriteLine($"Capacity is {capacity}");
 							break;
 
 						case 3:
-							var freePlaces = parking.GetFreePlaces();
+							var freePlaces = await parkingHttpService.GetFreePlaces();
 							Console.WriteLine($"Free places: {freePlaces}");
 							break;
 						case 4:
-							var vehicles = parking.GetVehicles();
+							var vehicles = await vehiclesHttpService.GetVehicles();
 							if (vehicles.Count == 0)
 							{
 								Console.WriteLine("No vehicles at the parking ");
@@ -79,19 +78,18 @@ namespace ConsoleApp1
 							break;
 
 						case 5:
-							parking.AddVehicle(new Vehicle(Vehicle.GenerateRandomRegistrationPlateNumber(), ChooseVehicle(), PutBalance()));
+							await vehiclesHttpService.AddVehicle(new Vehicle(Vehicle.GenerateRandomRegistrationPlateNumber(), ChooseVehicle(), PutBalance()));
 							break;
 
 						case 6:
-							parking.RemoveVehicle(InputId());
-
+							await vehiclesHttpService.DeleteVehicle(InputId());
 							Console.WriteLine("Vehicle successfully get");
 							break;
 
 						case 7:
-							var transactionsPeriod = parking.GetLastParkingTransactions();
+							var transactionsPeriod = await transactionsHttpService.GetLastTransactions();
 							Console.WriteLine("Transactions for a period: ");
-							if (transactionsPeriod.Length == 0)
+							if (transactionsPeriod.Count == 0)
 							{
 								Console.WriteLine("No transactions for a period");
 							}
@@ -107,9 +105,23 @@ namespace ConsoleApp1
                         case 8:
 							Console.WriteLine("Enter sum: ");
 							decimal sum = decimal.Parse(Console.ReadLine());
-							parking.TopUpVehicle(InputId(), sum );
-
+							await transactionsHttpService.TopUpVehicle(new TopUpVehicleDto() { Id = InputId(), Sum = sum });
 							Console.WriteLine("Successfull operation");
+							break;
+						case 9:
+							var transactions = await transactionsHttpService.AllFromLog();
+							Console.WriteLine("All transactions: ");
+							if (transactions == null)
+							{
+								Console.WriteLine("No transactions at all");
+							}
+							else
+							{
+								foreach (var transaction in transactions)
+								{
+									Console.WriteLine($"{transaction.vehicleId} - {transaction.Sum} - {transaction.transactionTime}");
+								}
+							}
 							break;
 					}
 				}
